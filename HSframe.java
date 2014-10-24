@@ -43,7 +43,7 @@ public class HSframe extends JFrame implements ChangeListener, ActionListener, M
 	private JButton _default = new JButton("Restore Default");
 
 	HSframe(PlayFrame pf, int currentH, float currentS){
-		setSize(340, 180);
+		setSize(350, 180);
 		_pf = pf;
 		cH = currentH;
 		cS = currentS;
