@@ -2,7 +2,6 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -30,19 +29,16 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.metal.MetalSliderUI;
+
 import listener.MediaPlayerListener;
 import model.VideoEditor;
+
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import worker.ExtractWorker;
 import worker.PlayWorker;
 import worker.RewindWorker;
-import javax.swing.plaf.metal.MetalSliderUI;
-
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.MediaPlayer;
-import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 
 /**
  * This class, PlayFrame.java, is a frame class that contains multiple JButtons
@@ -80,9 +76,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 	private JSlider _seekBar = new JSlider(JSlider.HORIZONTAL);
 	private JSlider source;
 	private JMenuItem bright;
-
 	private JMenuItem sat;
-
 	private JPanel _panel = new JPanel();
 	private JPanel _panelP = new JPanel();
 	private JPanel _panelOP = new JPanel();
@@ -91,7 +85,6 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 	private String _overLay;
 	private RewindWorker rw;
 	private JFrame bcframe = null;
-
 	private JFrame hsframe = null;
 	
 	private Component parent = this;
@@ -142,13 +135,9 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 		JMenuItem extract = new JMenuItem("Extract Audio from video");
 		JMenuItem addText = new JMenuItem("Add Text to Video");
 		JMenuItem extractVid = new JMenuItem("Extract Video (without audio)");
-
 		JMenuItem openVid = new JMenuItem("Open File to play");
 		bright = new JMenuItem("Set Brightness/Contrast");
 		sat = new JMenuItem("set Hue/Saturation");
-
-		JMenuItem openVid = new JMenuItem("Open Video to play");
-		bright = new JMenuItem("Set Brightness/Contrast");
 
 		editMenu.add(overlay);
 		editMenu.add(replace);
@@ -157,7 +146,6 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 		editMenu.add(extractVid);
 		open.add(openVid);
 		pref.add(bright);
-
 		pref.add(sat);
 
 		_seek.add(_vidTime);
@@ -205,10 +193,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 		String newName = null;
 		//check if the file to be played is a playable media type
 		if(_file.endsWith(".mp4") || _file.endsWith(".avi") || _file.endsWith(".mov")){
-
 			PlayWorker pworker = new PlayWorker(_file, newName);
-
-			PWorker pworker = new PWorker(_file, newName);
 			pworker.execute();
 			setContentPane(_mediaPlayer); 
 
@@ -222,10 +207,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 			_overLay = Integer.toString((int)duration);
 
 		}else if(_file.endsWith(".mp3")||  _file.endsWith(".aac")){
-
 			PlayWorker pworker = new PlayWorker(_file, newName);
-
-			PWorker pworker = new PWorker(_file, newName);
 			pworker.execute();
 			setContentPane(_mediaPlayer); 
 
@@ -271,12 +253,10 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 			}
 		});
 
-
 		sat.addActionListener(this);
 
 		bright.addActionListener(this);
 		
-
 		//when the pause button is pressed
 		_pause.addActionListener(this);
 
@@ -345,17 +325,11 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 					}
 				}catch(Exception e){
 					// Do Nothing
-
-				_dir = fc.getSelectedFile().getAbsolutePath();
-				if (_dir != null) {
-					_mediaPlayer.getMediaPlayer().playMedia(_dir);
-					_mediaPlayer.getMediaPlayer().start();
 				}
 			}
 
 		});
 
-		bright.addActionListener(this);
 
 		//when extract button is pressed,
 		extract.addActionListener(new ActionListener(){
@@ -394,11 +368,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 					if(! _newName.contains(".mp3") && !_newName.contains(".")) {
 						if(_override == 0 || !(fName.exists())){	
 							_audVid = true;
-
 							ExtractWorker eworker = new ExtractWorker(_file, null, null, _newName, _audVid);
-
-							EWorker eworker = new EWorker(_file, null, null, _newName, _audVid);
-
 							eworker.execute();
 						}
 					}
@@ -438,11 +408,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 					//check if the file name contains the extension.
 					if(! _newNameVid.contains(".mp4") && !_newNameVid.contains(".")) {
 						if(_overrideVid == 0 || !(fName.exists())){				
-
 							ExtractWorker eworker = new ExtractWorker(_file, null, null, _newNameVid, _audVid);
-
-							EWorker eworker = new EWorker(_file, null, null, _newNameVid, _audVid);
-
 							eworker.execute();
 						}
 					}
@@ -565,10 +531,8 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 				rw.execute();
 			}
 			setTitle("Vamix Player - Rewinding");
-
 			System.out.println(_mediaPlayer.getMediaPlayer().getHue());
 			System.out.println(_mediaPlayer.getMediaPlayer().getSaturation());
-
 		}
 		//if pause button is pressed, change the button to a play button
 		else if(e.getSource() == _pause) {
@@ -609,7 +573,6 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 			bcframe.setVisible(!bcframe.isVisible());
 
 
-
 		}else if(e.getSource() == sat){
 			int cH = _mediaPlayer.getMediaPlayer().getHue();
 			float cS = _mediaPlayer.getMediaPlayer().getSaturation();
@@ -621,7 +584,6 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 			}
 
 			hsframe.setVisible(!hsframe.isVisible());
-
 		}
 
 	}
@@ -706,6 +668,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 		_mediaPlayer.getMediaPlayer().setContrast(con);
 	}
 
+
 	public void setHue(int h) {
 		_mediaPlayer.getMediaPlayer().setHue(h);
 	}
@@ -714,6 +677,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 	public void setSat(float s) {
 		_mediaPlayer.getMediaPlayer().setSaturation(s);
 	}
+
 
 
 }
