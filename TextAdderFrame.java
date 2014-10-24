@@ -38,8 +38,6 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 
 	private JLabel _reqNewName = new JLabel("Save edited video as: (without .mp4 extension)");
 
-	private JLabel _reqNewName = new JLabel("Save edited video as: (with .mp4 extension)");
-
 	private JPanel _tS = new JPanel();
 	private JPanel _tF = new JPanel();
 	private JPanel _progPan = new JPanel();
@@ -333,7 +331,7 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 		else if (_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Please do not include \".mp4\" file extension");
 
-		else if (!_newName.contains(".mp4")) {
+		}else if (!_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Please include the \".mp4\" file extension");
 		} else if (_newName.contains(".") && !_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Sorry, Invalid file type");
