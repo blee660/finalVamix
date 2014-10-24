@@ -13,11 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-<<<<<<< HEAD
 import worker.ExtractWorker;
 
-=======
->>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 /**
  * The ExtractFrame class is a frame class where user is asked to enter
  * all the required information for extraction.
@@ -156,8 +153,6 @@ public class ExtractFrame extends JFrame implements ActionListener {
 
 						ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName, audio);
 
-						EWorker eworker = new EWorker(textFile, time, length, newName, audio);
-
 						eworker.execute();
 					}else{
 						//if user does not want to override, cancel extraction process
@@ -169,8 +164,6 @@ public class ExtractFrame extends JFrame implements ActionListener {
 					//If all conditions are met and filename does not exist, commence extraction
 
 					ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName, audio);
-
-					EWorker eworker = new EWorker(textFile, time, length, newName, audio);
 
 					eworker.execute();
 				}	
