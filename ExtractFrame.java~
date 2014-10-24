@@ -153,11 +153,11 @@ public class ExtractFrame extends JFrame implements ActionListener {
 						
 						//delete original file and commence extraction
 						newFile.delete();
-
+<<<<<<< HEAD
 						ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName, audio);
-
+=======
 						EWorker eworker = new EWorker(textFile, time, length, newName, audio);
-
+>>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 						eworker.execute();
 					}else{
 						//if user does not want to override, cancel extraction process
@@ -167,11 +167,11 @@ public class ExtractFrame extends JFrame implements ActionListener {
 				}
 				else{
 					//If all conditions are met and filename does not exist, commence extraction
-
+<<<<<<< HEAD
 					ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName, audio);
-
+=======
 					EWorker eworker = new EWorker(textFile, time, length, newName, audio);
-
+>>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 					eworker.execute();
 				}	
 

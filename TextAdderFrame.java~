@@ -25,20 +25,24 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+<<<<<<< HEAD
 import model.JTextFieldLimit;
 
 import worker.TextWorker;
 
+=======
+>>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 public class TextAdderFrame extends JFrame implements ActionListener {
 
 	private JLabel _reqTextS = new JLabel("Enter Text to add into start of Video: ");
 	private JLabel _reqTimeStart = new JLabel("How long do you wish the text to appear for?");
 	private JLabel _reqTextEnd = new JLabel("Enter Text to add into end of Video: ");
 	private JLabel _reqTimeEnd = new JLabel("How long do you wish the text to appear for?");
-
+<<<<<<< HEAD
 	private JLabel _reqNewName = new JLabel("Save edited video as: (without .mp4 extension)");
-
+=======
 	private JLabel _reqNewName = new JLabel("Save edited video as: (with .mp4 extension)");
+>>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 
 	private JPanel _tS = new JPanel();
 	private JPanel _tF = new JPanel();
@@ -329,15 +333,15 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 		
 		}
 		//if field entry is not done properly, display an error message
-
+<<<<<<< HEAD
 		else if (_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Please do not include \".mp4\" file extension");
-
+=======
 		else if (!_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Please include the \".mp4\" file extension");
 		} else if (_newName.contains(".") && !_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Sorry, Invalid file type");
-
+>>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 		} else if (_timeS == null || _timeE == null || _timeS.equals("") || _timeE.equals("")) {
 			JOptionPane.showMessageDialog(null, "Please enter time fields!");
 		} else if (_newName == null) {

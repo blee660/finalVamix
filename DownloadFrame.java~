@@ -16,8 +16,11 @@ import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+<<<<<<< HEAD
 import worker.DownloadWorker;
 
+=======
+>>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 /**
  * The DownloadFrame class is responsible for receiving necessary inputs for downloading.
  * 
@@ -122,11 +125,11 @@ public class DownloadFrame extends JFrame implements ActionListener{
 				//commence download if all conditions are met
 				if(_override == 1 || _override == 0 || !(f.exists())){		
 					_stop.setEnabled(true);
-
+<<<<<<< HEAD
 					DownloadWorker dworker = new DownloadWorker(_url, _override, _progressBar);
-
+=======
 					DWorker dworker = new DWorker(_url, _override, _progressBar);
-
+>>>>>>> 95d1e37cc901393698c8a050e28be77a20eed2ea
 					_stop.addActionListener(dworker);
 					dworker.execute();
 				}
