@@ -125,8 +125,6 @@ public class DownloadFrame extends JFrame implements ActionListener{
 
 					DownloadWorker dworker = new DownloadWorker(_url, _override, _progressBar);
 
-					DWorker dworker = new DWorker(_url, _override, _progressBar);
-
 					_stop.addActionListener(dworker);
 					dworker.execute();
 				}
