@@ -159,12 +159,12 @@ public class VamixWindow extends JFrame {
 			}
 			
 		});
-		
+		// when the help button is pressed
 		_help.addActionListener(new ActionListener(){
 			JFrame hf = null;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				//open up help file frame
 				if(hf == null || hf.isVisible()== false){
 					HelpFile hf = new HelpFile();
 					hf.setVisible(true);
@@ -184,7 +184,7 @@ public class VamixWindow extends JFrame {
 		});
 		
 	}
-	
+	//main method which creates the main GUI
 	public static void main(String[] agrs){
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -201,6 +201,7 @@ public class VamixWindow extends JFrame {
 
 		VamixWindow mainframe = new VamixWindow();
 
+		//set title, size and components
 		mainframe.setTitle("VAMIX");
 		mainframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		mainframe.setLayout(_fLayout);
@@ -215,6 +216,7 @@ public class VamixWindow extends JFrame {
 		mainframe.add(select, BorderLayout.CENTER);
 		mainframe.add(_listPane);
 
+		// set frame as visible
 		mainframe.setVisible(true);
 
 	}
