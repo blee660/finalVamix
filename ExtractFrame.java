@@ -140,18 +140,10 @@ public class ExtractFrame extends JFrame implements ActionListener {
 					//user specifies intention of overriding original file
 					if( o == JOptionPane.YES_OPTION){
 						
-						if (textFile.endsWith(".mp4") || textFile.endsWith(".avi") || textFile.endsWith(".mov")){
-							audio = false;
-						}else if(textFile.endsWith(".mp3") || textFile.endsWith(".aac")){
-							audio = true;
-						}
-							
-							
-						
 						//delete original file and commence extraction
 						newFile.delete();
 
-						ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName, audio);
+						ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName);
 
 						eworker.execute();
 					}else{
@@ -163,7 +155,7 @@ public class ExtractFrame extends JFrame implements ActionListener {
 				else{
 					//If all conditions are met and filename does not exist, commence extraction
 
-					ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName, audio);
+					ExtractWorker eworker = new ExtractWorker(textFile, time, length, newName);
 
 					eworker.execute();
 				}	

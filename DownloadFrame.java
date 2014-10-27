@@ -91,7 +91,8 @@ public class DownloadFrame extends JFrame implements ActionListener{
 		_url = _text.getText();
 		
 		//URL should contain "http://"
-		if (_url.contains("http://")) {
+		if (_url != null && !_url.equals("")) {
+			
 			String fileName = _url.substring( _url.lastIndexOf('/')+1, _url.length() );
 			File f = new File (fileName);
 			

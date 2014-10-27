@@ -1,19 +1,19 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,23 +22,22 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.MouseInputListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.metal.MetalSliderUI;
 
-import listener.MediaPlayerListener;
-import model.VideoEditor;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.MediaPlayer;
-import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import worker.ExtractWorker;
-import worker.PlayWorker;
 import worker.RewindWorker;
+import model.SubtitleAdder;
+import listener.MediaPlayerListener;
+import model.UpdateSeekBar;
+import model.VideoEditor;
+import model.UpdateLabel;
 
 /**
  * This class, PlayFrame.java, is a frame class that contains multiple JButtons
@@ -51,7 +50,7 @@ import worker.RewindWorker;
  *
  */
 
-public class PlayFrame extends JFrame implements ChangeListener, ActionListener, MouseInputListener{
+public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 
 	static final int VOL_MIN = 0;
 	static final int VOL_MAX = 120;
@@ -75,20 +74,43 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 	private JLabel _vidTime = new JLabel();
 	private JSlider _seekBar = new JSlider(JSlider.HORIZONTAL);
 	private JSlider source;
+
+	private JMenuBar _menuBar = new JMenuBar(); 
+	private JMenu subtitles = new JMenu("SUBTITLES");
+	private JMenu editMenu = new JMenu("EDIT");
+	private JMenu open = new JMenu("OPEN");
+	private JMenu pref = new JMenu("PREFERENCES");
 	private JMenuItem bright;
 	private JMenuItem sat;
+	private JRadioButtonMenuItem m;
+	
+	private JMenuItem overlay = new JMenuItem("Overlay Audio on video");
+	private JMenuItem replace = new JMenuItem("Replace Audio on video");
+	private JMenuItem extract = new JMenuItem("Extract Audio from video");
+	private JMenuItem addText = new JMenuItem("Add Text to Video");
+	private JMenuItem extractVid = new JMenuItem("Extract Video (without audio)");
+	private JRadioButtonMenuItem disable = new JRadioButtonMenuItem("Disable subtitle");
+	private JMenu enable = new JMenu("Select subtitles");
+	private JMenuItem selectSub = new JMenuItem("Add Subtitle to Video");
+	private JMenuItem exportGIF = new JMenuItem("Export GIF");
+
+	private JMenuItem openVid = new JMenuItem("Open File to play");
+
 	private JPanel _panel = new JPanel();
 	private JPanel _panelP = new JPanel();
-	private JPanel _panelOP = new JPanel();
+	private JPanel _panelVol = new JPanel();
 	private JPanel _seek = new JPanel();
+
 	private static String _file;
+
 	private String _overLay;
-	private RewindWorker rw;
+
 	private JFrame bcframe = null;
 	private JFrame hsframe = null;
-	
-	private Component parent = this;
-	
+
+	private PlayFrame parent = this;
+	private RewindWorker rw;
+
 	private EmbeddedMediaPlayerComponent _mediaPlayer; 
 
 	private long _time = 4000;
@@ -96,9 +118,14 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 	private int _currentVol;
 
 	private int _value;
-	private String _dir;
-	private boolean _audVid;
 
+	private long _mediaTime;
+
+	private Color lighterBlue= new Color(130, 170, 198); 
+	private Color menu1 = new Color(216, 227, 235);
+	private Color menu2 = new Color(232, 239, 243);
+
+	protected Object dirPath;
 
 	public static void main (final String args[]) {
 
@@ -112,41 +139,62 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 	}
 
 
-	PlayFrame (String file) { 
+	public PlayFrame (String file) { 
 		//construction of GUI design
 		_file = file;
+		_mediaPlayer = new EmbeddedMediaPlayerComponent(); 
 		setTitle("Vamix Player");
 
 		_seekBar.setMinimum(0);
 		_seekBar.setMaximum(1000);
 		_seekBar.setValue(0);
+		
+		_menuBar.setOpaque(true);
+		_menuBar.setBackground(lighterBlue);
 
-		JMenuBar menuBar = new JMenuBar();
-		JMenu editMenu = new JMenu("EDIT VIDEO");
-		JMenu open = new JMenu("OPEN");
-		JMenu pref = new JMenu("PREFERENCES");
-		menuBar.add(editMenu);
-		menuBar.add(open);
-		menuBar.add(pref);
+	
+		enable.setOpaque(true);
+		enable.setBackground(menu1);
+		
+		
+		selectSub.setOpaque(true);
+		selectSub.setBackground(menu2);
 
+		editMenu.add(overlay);
+		overlay.setBackground(menu1);
+		editMenu.add(replace);
+		replace.setBackground(menu2);
+		editMenu.add(extract);
+		extract.setBackground(menu1);
+		editMenu.add(addText);
+		addText.setBackground(menu2);
+		editMenu.add(extractVid);
+		extractVid.setBackground(menu1);
+		editMenu.add(exportGIF);
+		exportGIF.setBackground(menu2);
 
-		JMenuItem overlay = new JMenuItem("Overlay Audio on video");
-		JMenuItem replace = new JMenuItem("Replace Audio on video");
-		JMenuItem extract = new JMenuItem("Extract Audio from video");
-		JMenuItem addText = new JMenuItem("Add Text to Video");
-		JMenuItem extractVid = new JMenuItem("Extract Video (without audio)");
-		JMenuItem openVid = new JMenuItem("Open File to play");
+		Component[] comps = editMenu.getComponents();
+		for(Component c : comps) {
+			((JComponent) c).setOpaque(true); 
+		}
+		Component[] compSub = subtitles.getComponents();
+		for(Component c : compSub) {
+			((JComponent) c).setOpaque(true); 
+		}
+		Component[] compPref = pref.getComponents();
+		for(Component c : compPref) {
+			((JComponent) c).setOpaque(true); 
+		}
+
 		bright = new JMenuItem("Set Brightness/Contrast");
 		sat = new JMenuItem("set Hue/Saturation");
 
-		editMenu.add(overlay);
-		editMenu.add(replace);
-		editMenu.add(extract);
-		editMenu.add(addText);
-		editMenu.add(extractVid);
 		open.add(openVid);
+		openVid.setBackground(menu1);
 		pref.add(bright);
+		bright.setBackground(menu1);
 		pref.add(sat);
+		sat.setBackground(menu2);
 
 		_seek.add(_vidTime);
 		_seek.add(_seekBar);
@@ -164,14 +212,15 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 		_panel.add(_skipF);
 		_panel.add(_mute);
 
-		_panel.add(volume);
-		_panel.add(_volume);
+		_panelVol.add(volume);
+		_panelVol.add(_volume);
 
-		_panelOP.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		_panelOP.add(_sshot);
-		_panelOP.add(_close);
+		_panel.add(_panelVol);
+		_panel.add(_sshot);
+		_panel.add(_close);
 
-		_panel.add(_panelOP, BorderLayout.WEST);
+		_panel.setOpaque(true);
+		_panel.setBackground(lighterBlue);
 
 		Dimension prefSize = _seekBar.getPreferredSize();
 		prefSize.width = 800;
@@ -180,38 +229,33 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 
 		_panelP.add(_seek);
 		_panelP.add(_panel);
-
-		_mediaPlayer = new EmbeddedMediaPlayerComponent(); 
-
-		setLocation(100, 100);
+		
+		
 		setSize(1050, 600); 
+
 		//only the play frame closes when the x button is closed.
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 
-
-		String newName = null;
 		//check if the file to be played is a playable media type
-		if(_file.endsWith(".mp4") || _file.endsWith(".avi") || _file.endsWith(".mov")){
-			PlayWorker pworker = new PlayWorker(_file, newName);
-			pworker.execute();
+		if(_file.endsWith(".mp4") || _file.endsWith(".avi") || _file.endsWith(".mov") || _file.endsWith(".mkv")){
 			setContentPane(_mediaPlayer); 
-
-			getContentPane().add(menuBar, BorderLayout.NORTH);
+			_mediaPlayer.setBackground(Color.white);
+			setMenuBar(true);
+			getContentPane().add(_menuBar, BorderLayout.NORTH);
 			getContentPane().add(_panelP, BorderLayout.SOUTH);
 
 			_mediaPlayer.getMediaPlayer().playMedia(_file);
 			_mediaPlayer.getMediaPlayer().start();
 
+			setupSubtitleMenu(enable, disable, selectSub);
 			long duration = _mediaPlayer.getMediaPlayer().getLength()/1000;
 			_overLay = Integer.toString((int)duration);
 
 		}else if(_file.endsWith(".mp3")||  _file.endsWith(".aac")){
-			PlayWorker pworker = new PlayWorker(_file, newName);
-			pworker.execute();
 			setContentPane(_mediaPlayer); 
-
-			_sshot.setVisible(false);
+			setMenuBar(false);
+			getContentPane().add(_menuBar, BorderLayout.NORTH);
 
 			getContentPane().add(_panelP, BorderLayout.SOUTH);
 			_mediaPlayer.getMediaPlayer().playMedia(_file);
@@ -221,12 +265,88 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 			_overLay = Integer.toString((int)duration);
 		}
 
+		_mediaTime = _mediaPlayer.getMediaPlayer().getLength()/1000;
+
 		//add listener to the media player
 		_mediaPlayer.getMediaPlayer().addMediaPlayerEventListener(new MediaPlayerListener(this));
-		_mediaPlayer.getMediaPlayer().addMediaPlayerEventListener(new UpdateLabel());
-		_seekBar.addMouseListener(this);
+		_mediaPlayer.getMediaPlayer().addMediaPlayerEventListener(new UpdateLabel(_vidTime));
+		_seekBar.addMouseListener(new UpdateSeekBar(this, _seekBar, _mediaTime));
 
+		
 
+		//when the pause button is pressed
+		_pause.addActionListener(this);
+
+		//when the rewind button is pressed
+		_rewind.addActionListener(this);
+
+		//when skip forward button is pressed, skip a certain length of the video
+		_skipF.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_mediaPlayer.getMediaPlayer().skip(_time);
+			}
+
+		});
+
+		//when skip backward button is pressed, skip back a certain length of the video
+		_skipB.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_mediaPlayer.getMediaPlayer().skip(-_time);	
+			}
+
+		});
+
+		//when fast forward button is pressed, increase the rate of the change of the frames
+		_ff.addActionListener(this);
+
+		
+
+		//if mute button is pressed
+		_mute.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				//set the volume to zero
+				if(_mediaPlayer.getMediaPlayer().getVolume() != 0){
+					_currentVol = _mediaPlayer.getMediaPlayer().getVolume();
+					_mediaPlayer.getMediaPlayer().setVolume(0);
+					_volume.setValue(0);
+				}
+				//if the volume is already set to zero, turn the volume on again
+				else if(_mediaPlayer.getMediaPlayer().getVolume() == 0){
+					_mediaPlayer.getMediaPlayer().setVolume(_currentVol);
+					_volume.setValue(_currentVol);
+				}
+			}
+
+		});
+
+		_volume.addChangeListener(this);
+
+		
+
+		_sshot.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//String name = JOptionPane.showInputDialog("Save Screen shot of current window as (with .jpg extension): ");
+				_mediaPlayer.getMediaPlayer().setSnapshotDirectory(".");
+				boolean shot = _mediaPlayer.getMediaPlayer().saveSnapshot();
+				if(shot == true){
+					JOptionPane.showMessageDialog(null, "Snapshot saved to Current directory");
+				}else{
+					JOptionPane.showMessageDialog(null, "Snapshot failed");
+				}
+
+			}
+
+		});
+		
 		//if the Add Text button is clicked, open a new TextAdderFrame window
 		addText.addActionListener(new ActionListener() { 
 
@@ -257,79 +377,20 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 
 		bright.addActionListener(this);
 		
-		//when the pause button is pressed
-		_pause.addActionListener(this);
+		disable.addActionListener(this);
 
-		//when the rewind button is pressed
-		_rewind.addActionListener(this);
-
-		//when skip forward button is pressed, skip a certain length of the video
-		_skipF.addActionListener(new ActionListener(){
-
+		selectSub.addActionListener(new ActionListener(){
+			JFrame sAdder = null;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_mediaPlayer.getMediaPlayer().skip(_time);
-			}
-
-		});
-
-		//when skip backward button is pressed, skip back a certain length of the video
-		_skipB.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_mediaPlayer.getMediaPlayer().skip(-_time);	
-			}
-
-		});
-
-		//when fast forward button is pressed, increase the rate of the change of the frames
-		_ff.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				_pause.setText("▷");
-
-				if(_mediaPlayer.getMediaPlayer().getRate() == 1){
-					_mediaPlayer.getMediaPlayer().setRate(_speed);
-				}else if(_mediaPlayer.getMediaPlayer().getRate() == _speed){
-					_mediaPlayer.getMediaPlayer().setRate(_speed + 1.5f);
-				}else{
-					_mediaPlayer.getMediaPlayer().setRate(_speed + 1.5f);
+				if(sAdder == null || sAdder.isVisible() == false){
+					sAdder = new SubtitleAdder(_file);
+					sAdder.setVisible(true);
 				}
 
 			}
 
 		});
-
-		openVid.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser();
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				        "Audio & Video files", "mp4", "avi", "mp3", "mov", "aac");
-				fc.setFileFilter(filter);
-				fc.showOpenDialog(parent);
-				fc.setDialogTitle("Please select a file");
-				
-				try{
-					String dirPath = fc.getSelectedFile().getAbsolutePath();
-				
-					if (dirPath != null) {
-				
-						_dir = fc.getSelectedFile().getAbsolutePath();
-						_mediaPlayer.getMediaPlayer().playMedia(_dir);
-						_mediaPlayer.getMediaPlayer().start();
-					}
-				}catch(Exception e){
-					// Do Nothing
-				}
-			}
-
-		});
-
 
 		//when extract button is pressed,
 		extract.addActionListener(new ActionListener(){
@@ -359,16 +420,15 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 							_override = 3;
 						}
 					}
-					
+
 					else if (_newName.contains(".mp3") || _newName.contains(".")) {
 						JOptionPane.showMessageDialog(null, "The file name must not include the extension");
 					}
-					
+
 					//check if the file name contains the extension.
 					if(! _newName.contains(".mp3") && !_newName.contains(".")) {
 						if(_override == 0 || !(fName.exists())){	
-							_audVid = true;
-							ExtractWorker eworker = new ExtractWorker(_file, null, null, _newName, _audVid);
+							ExtractWorker eworker = new ExtractWorker(_file, null, null, _newName);
 							eworker.execute();
 						}
 					}
@@ -406,9 +466,9 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 						}
 					}
 					//check if the file name contains the extension.
-					if(! _newNameVid.contains(".mp4") && !_newNameVid.contains(".")) {
+					if(! _newNameVid.contains(".mp3") && !_newNameVid.contains(".")) {
 						if(_overrideVid == 0 || !(fName.exists())){				
-							ExtractWorker eworker = new ExtractWorker(_file, null, null, _newNameVid, _audVid);
+							ExtractWorker eworker = new ExtractWorker(_file, null, null, _newNameVid);
 							eworker.execute();
 						}
 					}
@@ -419,37 +479,27 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 				}
 			}			
 		});
+		
+		exportGIF.addActionListener(new ActionListener(){
 
-		//if mute button is pressed
-		_mute.addActionListener(new ActionListener(){
-
+			JFrame gf = null;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				//set the volume to zero
-				if(_mediaPlayer.getMediaPlayer().getVolume() != 0){
-					_currentVol = _mediaPlayer.getMediaPlayer().getVolume();
-					_mediaPlayer.getMediaPlayer().setVolume(0);
-					_volume.setValue(0);
-				}
-				//if the volume is already set to zero, turn the volume on again
-				else if(_mediaPlayer.getMediaPlayer().getVolume() == 0){
-					_mediaPlayer.getMediaPlayer().setVolume(_currentVol);
-					_volume.setValue(_currentVol);
+				if(gf == null || gf.isVisible() == false){
+					gf = new ExportGIFFrame(_file, _mediaTime);
+					gf.setVisible(true);
 				}
 			}
-
+			
 		});
-
-		_volume.addChangeListener(this);
-
+		
 		//if the overlay option in the menu bar is selected, open a VideoEditor window
 		overlay.addActionListener(new ActionListener(){
 			JFrame vd = null;
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(vd == null || vd.isVisible() == false){
-					vd = new VideoEditor("Overlay", _overLay, _file);
+					vd = new VideoEditor("Overlay", _overLay, _file, _mediaPlayer.getMediaPlayer().getLength());
 					vd.setVisible(true);
 				}
 
@@ -464,59 +514,48 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 			JFrame vd = null;
 			public void actionPerformed(ActionEvent arg0) {
 				if(vd == null || vd.isVisible() == false){
-					vd = new VideoEditor("Replace", _overLay, _file);
+					vd = new VideoEditor("Replace", _overLay, _file, _mediaPlayer.getMediaPlayer().getLength());
 					vd.setVisible(true);
 				}
 			}
 		});
-
-		_sshot.addActionListener(new ActionListener(){
+		openVid.addActionListener(new ActionListener(){
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				//String name = JOptionPane.showInputDialog("Save Screen shot of current window as (with .jpg extension): ");
-				_mediaPlayer.getMediaPlayer().setSnapshotDirectory(".");
-				boolean shot = _mediaPlayer.getMediaPlayer().saveSnapshot();
-				if(shot == true){
-					JOptionPane.showMessageDialog(null, "Snapshot saved to current directory");
-				}else{
-					JOptionPane.showMessageDialog(null, "Snapshot failed");
-				}
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Audio & Video files", "mp4", "avi", "mp3", "mov", "aac", "mkv");
+				fc.setFileFilter(filter);
+				fc.showOpenDialog(parent);
+				fc.setDialogTitle("Please select a file");
 
+				try{
+					dirPath = fc.getSelectedFile().getAbsolutePath();
+
+					if (dirPath != null) {
+						_mediaPlayer.getMediaPlayer().playMedia(dirPath.toString());
+						_mediaPlayer.getMediaPlayer().start();
+						subtitles.removeAll();
+						enable.removeAll();
+						_menuBar.removeAll();
+						if(dirPath.toString().endsWith(".mp4") ||dirPath.toString().endsWith(".mov")|| dirPath.toString().endsWith(".avi")||dirPath.toString().endsWith(".mkv")){
+							setMenuBar(true);
+							pref.setVisible(true);
+							_sshot.setEnabled(true);
+						}else if(dirPath.toString().endsWith(".mp3") || dirPath.toString().endsWith("aac")){
+							setMenuBar(false);
+							pref.setVisible(false);
+							_sshot.setEnabled(false);
+						}
+						setupSubtitleMenu(enable, disable, selectSub);
+					}
+				}catch(Exception arg){
+					// Do Nothing
+				}
 			}
 
 		});
 
-
-	}
-
-	//this class is responsible for updating the time next to the seek bar as the media progresses
-	private class UpdateLabel extends MediaPlayerEventAdapter{
-
-		public void positionChanged(MediaPlayer _mediaPlayer, float pos) {
-			long currentMillis = (long)(_mediaPlayer.getLength()*pos);
-			long totalMillis = _mediaPlayer.getLength();
-
-			//change the time in the desired format
-			String currentTime = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(currentMillis),
-					TimeUnit.MILLISECONDS.toMinutes(currentMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(currentMillis)), 
-					TimeUnit.MILLISECONDS.toSeconds(currentMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentMillis)));
-			String totalTime = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(totalMillis),
-					TimeUnit.MILLISECONDS.toMinutes(totalMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(totalMillis)), 
-					TimeUnit.MILLISECONDS.toSeconds(totalMillis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalMillis)));
-
-			_vidTime.setText(currentTime + "/" + totalTime);
-		}
-	}
-
-	//when the volume bar is changed, adjust to the new set volume
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		JSlider source = (JSlider)e.getSource();
-
-		int vol = (int)source.getValue();
-		_mediaPlayer.getMediaPlayer().setVolume(vol);
-		//}
 	}
 
 	//general rules for clicking any other buttons
@@ -531,8 +570,17 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 				rw.execute();
 			}
 			setTitle("Vamix Player - Rewinding");
-			System.out.println(_mediaPlayer.getMediaPlayer().getHue());
-			System.out.println(_mediaPlayer.getMediaPlayer().getSaturation());
+			//
+		}else if(e.getSource() == _ff){
+			_pause.setText("▷");
+
+			if(_mediaPlayer.getMediaPlayer().getRate() == 1){
+				_mediaPlayer.getMediaPlayer().setRate(_speed);
+			}else if(_mediaPlayer.getMediaPlayer().getRate() == _speed){
+				_mediaPlayer.getMediaPlayer().setRate(_speed + 1.5f);
+			}else{
+				_mediaPlayer.getMediaPlayer().setRate(_speed + 1.5f);
+			}
 		}
 		//if pause button is pressed, change the button to a play button
 		else if(e.getSource() == _pause) {
@@ -560,14 +608,14 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 				_pause.setText("||");
 			}
 		}else if(e.getSource() == bright){
-			
+
 			float cB = _mediaPlayer.getMediaPlayer().getBrightness();
 			float cC = _mediaPlayer.getMediaPlayer().getContrast();
 
 			_mediaPlayer.getMediaPlayer().setAdjustVideo(true);
-			
+
 			if(bcframe == null || bcframe.isVisible() == false){
-				bcframe = new BCframe(this, cB, cC);
+				bcframe = new BrightContrastFrame(this, cB, cC);
 			}
 
 			bcframe.setVisible(!bcframe.isVisible());
@@ -578,19 +626,43 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 			float cS = _mediaPlayer.getMediaPlayer().getSaturation();
 
 			_mediaPlayer.getMediaPlayer().setAdjustVideo(true);
-			
+
 			if(hsframe == null || hsframe.isVisible() == false){
-				hsframe = new HSframe(this, cH, cS);
+				hsframe = new HueSaturationFrame(this, cH, cS);
 			}
 
 			hsframe.setVisible(!hsframe.isVisible());
+
+		}else if(e.getSource().toString().contains("Subtitle") || e.getSource().toString().contains("Disable")){
+
+			if(e.getSource().toString().contains("Subtitle")){
+				int spuVal = Integer.parseInt(e.getActionCommand().split(" ")[1]);
+				_mediaPlayer.getMediaPlayer().setSpu(spuVal + 1);
+			}else{
+				_mediaPlayer.getMediaPlayer().setSpu(-1);
+			}
+
+			if(m != null){
+				m.setSelected(false);
+			}
+
+			m = (JRadioButtonMenuItem) e.getSource();
+
 		}
 
 	}
 
+	//when the volume bar is changed, adjust to the new set volume
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		JSlider source = (JSlider)e.getSource();
+
+		int vol = (int)source.getValue();
+		_mediaPlayer.getMediaPlayer().setVolume(vol);
+	}
+
 	public void updateSeekBar(int time) {
 		_seekBar.setValue(time);
-
 	}
 
 	public void changeMediaPlayerTime(long t) {
@@ -598,60 +670,7 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 
 	}
 
-	//if the user clicks a point on the seek bar, go to that frame
-	@Override
-	public void mouseClicked(MouseEvent e) {
-
-		_seekBar.setUI(new MetalSliderUI() {
-			protected void scrollDueToClickInTrack(int direction) {
-
-				_value = _seekBar.getValue(); 
-
-				if (_seekBar.getOrientation() == JSlider.HORIZONTAL) {
-					_value = this.valueForXPosition(_seekBar.getMousePosition().x);
-
-				}
-				_seekBar.setValue(_value);
-				_mediaPlayer.getMediaPlayer().setTime(_value*(_mediaPlayer.getMediaPlayer().getLength())/1000);
-			}
-		});
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		updateMediaTime(e);
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		updateMediaTime(e);
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	void updateMediaTime(MouseEvent e){
+	public void updateMediaTime(MouseEvent e){
 		source = (JSlider)e.getSource();
 		_value = source.getValue(); 
 		_seekBar.setValue(_value);
@@ -679,5 +698,74 @@ public class PlayFrame extends JFrame implements ChangeListener, ActionListener,
 	}
 
 
+	public void setSubtitleTrue(File sub) {
+		_mediaPlayer.getMediaPlayer().setSubTitleFile(sub);
+	}
+
+	public void playFile(String file){
+		_mediaPlayer.getMediaPlayer().playMedia(file);
+	}
+
+	public void setupSubtitleMenu(JMenu enable, JMenuItem disable, JMenuItem selectsub){
+		if(_mediaPlayer.getMediaPlayer().getSpuCount() != 0){
+
+			enable.add(disable);
+			disable.setBackground(menu1);
+
+			enable.setEnabled(true);
+			disable.setEnabled(true);
+			m = (JRadioButtonMenuItem) disable;
+			disable.setSelected(true);
+			_mediaPlayer.getMediaPlayer().setSpu(-1);
+
+			int i;
+			for(i = 1; i<_mediaPlayer.getMediaPlayer().getSpuCount(); i++){
+				JRadioButtonMenuItem j = new JRadioButtonMenuItem( "Subtitle " + (i));
+				enable.add(j);
+
+				if(i%2 == 1){
+					j.setBackground(menu2);
+				}else{
+					j.setBackground(menu1);
+				}
+
+				j.setActionCommand("Subtitle "+(i)); 
+				j.addActionListener(this);
+			}
+
+		}else if(_mediaPlayer.getMediaPlayer().getSpuCount() == 0){
+			enable.setEnabled(false);
+			disable.setEnabled(false);
+		}
+		subtitles.add(enable);
+		subtitles.add(selectsub);
+	}
+	
+	public void setMenuBar(boolean video){
+		
+		_menuBar.add(open);
+		_menuBar.add(editMenu);
+		_menuBar.add(subtitles);
+		_menuBar.add(pref);
+		
+		if(video == false){
+			editMenu.setEnabled(false);
+			subtitles.setEnabled(false);
+			pref.setEnabled(false);
+			
+			editMenu.setVisible(false);
+			subtitles.setVisible(false);
+			pref.setVisible(false);
+		}else if(video == true){
+			editMenu.setEnabled(true);
+			subtitles.setEnabled(true);
+			pref.setEnabled(true);
+			
+			editMenu.setVisible(true);
+			subtitles.setVisible(true);
+			pref.setVisible(true);
+		}
+		
+	}
 
 }

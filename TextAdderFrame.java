@@ -21,8 +21,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import model.JTextFieldLimit;
@@ -36,18 +39,23 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 	private JLabel _reqTextEnd = new JLabel("Enter Text to add into end of Video: ");
 	private JLabel _reqTimeEnd = new JLabel("How long do you wish the text to appear for?");
 
-	private JLabel _reqNewName = new JLabel("Save edited video as: (without .mp4 extension)");
+	private JLabel _reqNewName = new JLabel("Save video as: (without mp4 extension)");
 
 	private JPanel _tS = new JPanel();
 	private JPanel _tF = new JPanel();
 	private JPanel _progPan = new JPanel();
 
 	private JTextArea _enterTextS = new JTextArea(10, 40);
-	private JTextField _enterTimeStart = new JTextField("in seconds:", 10);
+	private SpinnerModel sm = new SpinnerNumberModel(0, 0, 30, 1);
+	private SpinnerModel sm2 = new SpinnerNumberModel(0, 0, 30, 1);
+	private JSpinner _enterTimeStart = new JSpinner(sm);
 	private JTextArea _enterTextEnd = new JTextArea(10,40);
-	private JTextField _enterTimeEnd = new JTextField("in seconds:", 10);
+	private JSpinner _enterTimeEnd = new JSpinner(sm2);
 	private JTextField _enterNewName = new JTextField(20);
 
+	private JLabel sec = new JLabel("seconds");
+	private JLabel sec2 = new JLabel("seconds");
+	
 	private JButton _cancel = new JButton("Cancel");
 	private JButton _add = new JButton("Add Text");
 	private FlowLayout _layout = new FlowLayout();
@@ -85,6 +93,8 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 
 	//constructor of the class
 	TextAdderFrame(String vidName, long time){
+		
+		
 		
 		try{
 			customFont = Font.createFont(Font.TRUETYPE_FONT, new File("/usr/share/fonts/truetype/ubuntu-font-family/" + "Ubuntu-L.ttf"));
@@ -148,6 +158,7 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 
 		_tS.add(_reqTimeStart);
 		_tS.add(_enterTimeStart);
+		_tS.add(sec);
 
 		add(_tS);
 
@@ -156,6 +167,7 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 
 		_tF.add(_reqTimeEnd);
 		_tF.add(_enterTimeEnd);
+		_tF.add(sec2);
 
 		add(_tF);
 
@@ -199,7 +211,6 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				cb = (JComboBox<String>)e.getSource();
 				updatePreview(cb);
-				System.out.println(_time);
 			}
 		});
 
@@ -223,25 +234,6 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 
 		//if the Add button is clicked
 		_add.addActionListener(this);
-
-
-		_enterTimeStart.addMouseListener(new MouseAdapter(){
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				_enterTimeStart.setText("");
-			}
-		});
-
-
-		_enterTimeEnd.addMouseListener(new MouseAdapter(){
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				_enterTimeEnd.setText("");
-			}
-		});
-
 	}
 
 	protected void updatePreview(JComboBox<String> cbItem){
@@ -298,9 +290,9 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		_textS = _enterTextS.getText();
-		_timeS = _enterTimeStart.getText();
+		_timeS = _enterTimeStart.getValue().toString();
 		_textE = _enterTextEnd.getText();
-		_timeE = _enterTimeEnd.getText();
+		_timeE = _enterTimeEnd.getValue().toString();
 		_newName = _enterNewName.getText();
 	
 		
@@ -331,8 +323,6 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 		else if (_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Please do not include \".mp4\" file extension");
 
-		}else if (!_newName.contains(".mp4")) {
-			JOptionPane.showMessageDialog(null, "Please include the \".mp4\" file extension");
 		} else if (_newName.contains(".") && !_newName.contains(".mp4")) {
 			JOptionPane.showMessageDialog(null, "Sorry, Invalid file type");
 
@@ -367,6 +357,5 @@ public class TextAdderFrame extends JFrame implements ActionListener {
 				
 			_add.setEnabled(false);
 		}
-
 	}
 }

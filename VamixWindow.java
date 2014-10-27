@@ -1,13 +1,19 @@
 package GUI;
 
+import helperFiles.HelpFile;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -30,24 +36,28 @@ public class VamixWindow extends JFrame {
 	
 	ImageIcon download = new ImageIcon("./src/download.png");
 	ImageIcon play = new ImageIcon("./src/play.png");
-	ImageIcon extract = new ImageIcon("./src/extract.jpg");
-	ImageIcon quit = new ImageIcon("./src/quit.jpg");
+	ImageIcon extract = new ImageIcon("./src/cut.png");
+	ImageIcon quit = new ImageIcon("./src/quit.png");
+	ImageIcon help = new ImageIcon("./src/help.png");
 	
 	Image downImg = download.getImage().getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 	Image extImg = extract.getImage().getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 	Image playImg = play.getImage().getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
-	Image quitImg = quit.getImage().getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
+	Image quitImg = quit.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+	Image helpImg = help.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 	
 	private JButton _download = new JButton("Download");
 	private JButton _extract = new JButton("Extract");
-	private JButton _play = new JButton("Play");
+	private JButton _play = new JButton("Play&Edit");
+	private JButton _help = new JButton("Help");
 	private JButton _quit = new JButton("Quit");
 	private Component parent = this;
-	GridLayout layout = new GridLayout(0,4);
 	
 	private JPanel _listPane = new JPanel();
+	private JPanel _hQPanel = new JPanel();
 	private String _dirPath;
 	private FlowLayout _fLayout = new FlowLayout();
+	GridLayout layout = new GridLayout(0,4);
 	
 	JLabel select = new JLabel("<html><br>Welcome to VAMIX! Select from the following options: <br><html>");
 	
@@ -65,9 +75,24 @@ public class VamixWindow extends JFrame {
 		_play.setVerticalTextPosition(SwingConstants.BOTTOM);
 		_play.setHorizontalTextPosition(SwingConstants.CENTER);
 		
+		_help.setIcon(new ImageIcon(helpImg));
+		_help.setVerticalTextPosition(SwingConstants.CENTER);
+		_help.setHorizontalTextPosition(SwingConstants.LEFT);
+		
 		_quit.setIcon(new ImageIcon(quitImg));
-		_quit.setVerticalTextPosition(SwingConstants.BOTTOM);
-		_quit.setHorizontalTextPosition(SwingConstants.CENTER);
+		_quit.setVerticalTextPosition(SwingConstants.CENTER);
+		_quit.setHorizontalTextPosition(SwingConstants.LEFT);
+
+		_hQPanel.setSize(70, 70);
+		_hQPanel.setLayout(new GridLayout(2,1));
+		
+		JPanel border = new JPanel(new BorderLayout());
+        border.add(_help, BorderLayout.CENTER);
+        _hQPanel.add(border);
+        
+    	JPanel border2 = new JPanel(new BorderLayout());
+        border2.add(_quit, BorderLayout.CENTER);
+        _hQPanel.add(border2);
 		
 		//if download button is pressed, open a new frame
 		_download.addActionListener(new ActionListener() {
@@ -97,16 +122,17 @@ public class VamixWindow extends JFrame {
 				if(playFrame == null || playFrame.isVisible() == false){
 					
 					final JFileChooser fc = new JFileChooser();
-					FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					        "Audio & Video files", "mp4", "avi", "mp3", "mov", "aac");
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("Audio & Video files", "mp4", "avi", "mp3", "mov", "aac", "mkv");
 					fc.setFileFilter(filter);
+					fc.setDialogTitle("Open file to play");
 					fc.showOpenDialog(parent);
-					fc.setDialogTitle("Please select a file");
+					
 					
 					try{
 						_dirPath = fc.getSelectedFile().getAbsolutePath();
 					
 						if (_dirPath != null) {
+							
 							playFrame = new PlayFrame(_dirPath);
 							playFrame.setVisible(true);
 						}else{
@@ -130,6 +156,21 @@ public class VamixWindow extends JFrame {
 					extractFrame = new ExtractFrame();
 				}
 				extractFrame.setVisible(!extractFrame.isVisible());
+			}
+			
+		});
+		
+		_help.addActionListener(new ActionListener(){
+			JFrame hf = null;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(hf == null || hf.isVisible()== false){
+					HelpFile hf = new HelpFile();
+					hf.setVisible(true);
+				}
+		
+				
 			}
 			
 		});
@@ -162,21 +203,17 @@ public class VamixWindow extends JFrame {
 
 		VamixWindow mainframe = new VamixWindow();
 
-		mainframe.setTitle("Audio Mixer");
+		mainframe.setTitle("VAMIX");
 		mainframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		mainframe.setLayout(_fLayout);
-		mainframe.setSize(600, 310);
+		mainframe.setSize(450,150);
 		
 		_listPane.setLayout(layout);
 		_listPane.add(_download);
 		_listPane.add(_play);
 		_listPane.add(_extract);
-		_listPane.add(_quit);
+		_listPane.add(_hQPanel);
 	
-		ImageIcon vamix = new ImageIcon("./src/vamix.png");
-		JLabel vam = new JLabel(vamix);
-
-		mainframe.add(vam);
 		mainframe.add(select, BorderLayout.CENTER);
 		mainframe.add(_listPane);
 
