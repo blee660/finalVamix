@@ -480,6 +480,7 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 			}			
 		});
 		
+		//create new frame to export GIFs
 		exportGIF.addActionListener(new ActionListener(){
 
 			JFrame gf = null;
@@ -519,25 +520,37 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 				}
 			}
 		});
+		
+		// Opening a new media file to play
 		openVid.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				//Open a new file chooser window
 				JFileChooser fc = new JFileChooser();
+				
+				//filter extensions so only valid media files are shown
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Audio & Video files", "mp4", "avi", "mp3", "mov", "aac", "mkv");
 				fc.setFileFilter(filter);
 				fc.showOpenDialog(parent);
 				fc.setDialogTitle("Please select a file");
 
 				try{
+					//get the path of the selected file
 					dirPath = fc.getSelectedFile().getAbsolutePath();
 
 					if (dirPath != null) {
+						
+						// play selected media
 						_mediaPlayer.getMediaPlayer().playMedia(dirPath.toString());
 						_mediaPlayer.getMediaPlayer().start();
+						
+						//refresh the menubar
 						subtitles.removeAll();
 						enable.removeAll();
 						_menuBar.removeAll();
+						//set menubar according to whether file is a video file or an audio file
 						if(dirPath.toString().endsWith(".mp4") ||dirPath.toString().endsWith(".mov")|| dirPath.toString().endsWith(".avi")||dirPath.toString().endsWith(".mkv")){
 							setMenuBar(true);
 							pref.setVisible(true);
