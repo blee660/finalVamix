@@ -832,12 +832,6 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 	 * This setMenuBar method reinitialises the subtitle menu according
 	 * to whether the media file playing has subtitle tracks or not 
 	 * 
-	 * @param enable - menu for subtitle items to go into
-	 * @param disable - menu item for disabling subtitles
-	 * @param selectsub - menu item for saving subtitles
-	 * 
-	 * @author blee660
-	 * 
 	 * */
 	public void setMenuBar(boolean video){
 		
