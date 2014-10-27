@@ -516,7 +516,7 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 			JFrame vd = null;
 			public void actionPerformed(ActionEvent arg0) {
 				if(vd == null || vd.isVisible() == false){
-					vd = new VideoEditor("Replace", _overLay, _file, _mediaPlayer.getMediaPlayer().getLength());
+					vd = new VideoEditor("Replace", _overLay, _file, _mediaTime);
 					vd.setVisible(true);
 				}
 			}
@@ -829,8 +829,12 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 	
 	/**
 	 * 
-	 * This setMenuBar method reinitialises the subtitle menu according
-	 * to whether the media file playing has subtitle tracks or not 
+	 * This setMenuBar method reinitialises the media player menu bar
+	 * according to whether the file being played is a video file or an audio
+	 * file
+	 * 
+	 * @param video - boolean which shows whether file is video or audio
+	 * @author blee660
 	 * 
 	 * */
 	public void setMenuBar(boolean video){

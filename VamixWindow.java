@@ -169,8 +169,6 @@ public class VamixWindow extends JFrame {
 					HelpFile hf = new HelpFile();
 					hf.setVisible(true);
 				}
-		
-				
 			}
 			
 		});
