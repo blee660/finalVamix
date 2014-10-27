@@ -326,6 +326,7 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 
 		});
 
+		//add actionlistener to volume slider
 		_volume.addChangeListener(this);
 
 		
@@ -665,7 +666,7 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 
 	}
 
-	//when the volume bar is changed, adjust to the new set volume
+	//when the volume bar state is changed, adjust to the new set volume
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		JSlider source = (JSlider)e.getSource();
@@ -674,15 +675,39 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 		_mediaPlayer.getMediaPlayer().setVolume(vol);
 	}
 
+	/**
+	 * 
+	 * This method sets the value of the seek bar according to the current media time
+	 * 
+	 * @param time - time of media player
+	 * @author blee660
+	 * 
+	 * */
 	public void updateSeekBar(int time) {
 		_seekBar.setValue(time);
 	}
 
+	/**
+	 * 
+	 * This method sets the time of the media player according to a given value
+	 * 
+	 * @param t - time to set media player
+	 * @author blee660
+	 * 
+	 * */
 	public void changeMediaPlayerTime(long t) {
 		_mediaPlayer.getMediaPlayer().setTime(t);
 
 	}
 
+	/**
+	 * 
+	 * This method updates the time of the media according to the seek bar value
+	 * 
+	 * @param MouseEvent e - event source provides seek bar value
+	 * @author blee660
+	 * 
+	 * */
 	public void updateMediaTime(MouseEvent e){
 		source = (JSlider)e.getSource();
 		_value = source.getValue(); 
@@ -691,29 +716,57 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 	}
 
 
+	/**
+	 * 
+	 * This setBrightness method sets the brightness to a specified value
+	 * 
+	 * @param  br - brightness level
+	 * @author blee660
+	 * 
+	 * */
 	public void setBrightness(float br) {
 		_mediaPlayer.getMediaPlayer().setBrightness(br);
 	}
 
 
+	/**
+	 * 
+	 * This setContrast method sets the contrast to a specified value
+	 * 
+	 * @param con = contrast level
+	 * @author blee660
+	 * 
+	 * */
 	public void setContrast(float con) {
 		_mediaPlayer.getMediaPlayer().setContrast(con);
 	}
 
-
+	/**
+	 * 
+	 * This setHue method sets the hue to a specified value
+	 * 
+	 * @param h - hue level
+	 * @author blee660
+	 * 
+	 * */
 	public void setHue(int h) {
 		_mediaPlayer.getMediaPlayer().setHue(h);
 	}
 
-
+	/**
+	 * 
+	 * This setSat method sets the media saturation to a specified value
+	 * 
+	 * @param s - saturation level
+	 * @author blee660
+	 * 
+	 * */
 	public void setSat(float s) {
 		_mediaPlayer.getMediaPlayer().setSaturation(s);
 	}
 
 
-	public void setSubtitleTrue(File sub) {
-		_mediaPlayer.getMediaPlayer().setSubTitleFile(sub);
-	}
+
 
 	public void playFile(String file){
 		_mediaPlayer.getMediaPlayer().playMedia(file);
