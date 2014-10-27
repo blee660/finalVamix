@@ -18,8 +18,21 @@ import javax.swing.SpinnerNumberModel;
 
 import worker.GIFWorker;
 
+/**
+ * 
+ * This ExportGIFFrame class enables exporting of GIF files from a video
+ * It makes use of the GIFWorker class 
+ * 
+ * @param file - current video file
+ * @param time - time of video file
+ * 
+ * @author blee660
+ * 
+ * 
+ * */
 public class ExportGIFFrame extends JFrame{
 
+	//Set up GUI components
 	private FlowLayout _layout = new FlowLayout();
 	private String _file;
 	
@@ -34,8 +47,6 @@ public class ExportGIFFrame extends JFrame{
 	private JRadioButton _option = new JRadioButton("5s", true);
 	private JRadioButton _option2 = new JRadioButton("10s");
 
-	
-	
 	private SpinnerModel sm2 = new SpinnerNumberModel(0, 0, 59, 1);
 	private SpinnerModel sm3 = new SpinnerNumberModel(0, 0, 59, 1);
 	private SpinnerModel sm4 = new SpinnerNumberModel(0, 0, 59, 1);
@@ -62,10 +73,12 @@ public class ExportGIFFrame extends JFrame{
 	
 	private GIFWorker gw;
 	
+	//Constructor for GIFFrame
 	public ExportGIFFrame(String file, long time){
 		
 		_time = time;
 		
+		//set title, size and add GUI components
 		setTitle("Export GIF");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(500, 200);
@@ -103,6 +116,7 @@ public class ExportGIFFrame extends JFrame{
 		
 		add(_buttonPanel);
 		
+		// add Action listener to the start button
 		_start.addActionListener(new ActionListener(){
 
 			@Override
@@ -111,6 +125,7 @@ public class ExportGIFFrame extends JFrame{
 				sm = startM.getValue().toString();
 				ss = startS.getValue().toString();
 				
+				//check if the time specified is 1 digit, and append a "0" to the front if so
 				if(sh.length() == 1){
 					sh = "0" + sh;
 				}
@@ -120,30 +135,42 @@ public class ExportGIFFrame extends JFrame{
 				if(ss.length() == 1){
 					ss = "0" + ss;
 				}
+				//get time format in hh:mm:ss
 				timeStart = sh + ":" + sm + ":" + ss;
+				
+				//check whether time for GIF is speciifed as 5 or 10 seconds
 				if(_option.isSelected()){
 					_durationTime = "5";
 				}else if(_option2.isSelected()){
 					_durationTime = "10";
 				}
+				//get name of ne GIF file
 				_gifName = _newName.getText();
 				
 				_time2 = Integer.parseInt(startH.getValue().toString())*3600 + Integer.parseInt(startM.getValue().toString())*60 
 						+ Integer.parseInt(startS.getValue().toString());
 	
+				//check whether the start time exceeds the length of the video
 				if(_time2 >= (int)_time){
 					JOptionPane.showMessageDialog(null, "Specified start time exceeds length of video");
-				}else if(_time2 + Integer.parseInt(_durationTime) > (int)_time){
+				}
+				//Check whether the start time + duration exceeds the length of the video
+				else if(_time2 + Integer.parseInt(_durationTime) > (int)_time){
 					JOptionPane.showMessageDialog(null, "Specified gif time exceeds media time");
-				}else if(_newName == null || _newName.getText().equals("")){
+				}
+				//Check whether the name text field is empty
+				else if(_newName == null || _newName.getText().equals("")){
 					JOptionPane.showMessageDialog(null, "Please enter the new name for gif file");
-				}else if(_newName.getText().contains(".gif")){
+				}
+				//GIF file should not have extension
+				else if(_newName.getText().contains(".gif")){
 					JOptionPane.showMessageDialog(null, "Please remove .gif extension from new name");
-				}else{
-	
+				}
+				//if all conditions are met
+				else{
+					// create new GIFWorker and execute
 					gw = new GIFWorker(_file, timeStart, _durationTime, _gifName);
 					gw.execute();
-				
 				
 				}
 				
@@ -151,15 +178,18 @@ public class ExportGIFFrame extends JFrame{
 			
 		});
 		
+		// add action listener to cancel button
 		_cancel.addActionListener(new ActionListener(){
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			
+				
+				// if worker is in process, cancel it
 				if(gw != null){
 					gw.cancel(true);
 					gw.stopProcess();
 				}
+				//dispose frame
 				dispose();
 				setVisible(false);
 			}
