@@ -766,12 +766,32 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 	}
 
 
-
-
+	/**
+	 * 
+	 * This playFile method plays a given file
+	 * 
+	 * @param file - file to be played
+	 * @author blee660
+	 * 
+	 * */
 	public void playFile(String file){
 		_mediaPlayer.getMediaPlayer().playMedia(file);
 	}
 
+	
+
+	/**
+	 * 
+	 * This setupSubtitleMenu method reinitialises the subtitle menu according
+	 * to whether the media file playing has subtitle tracks or not 
+	 * 
+	 * @param enable - menu for subtitle items to go into
+	 * @param disable - menu item for disabling subtitles
+	 * @param selectsub - menu item for saving subtitles
+	 * 
+	 * @author blee660
+	 * 
+	 * */
 	public void setupSubtitleMenu(JMenu enable, JMenuItem disable, JMenuItem selectsub){
 		if(_mediaPlayer.getMediaPlayer().getSpuCount() != 0){
 
@@ -807,6 +827,18 @@ public class PlayFrame extends JFrame implements ActionListener, ChangeListener{
 		subtitles.add(selectsub);
 	}
 	
+	/**
+	 * 
+	 * This setMenuBar method reinitialises the subtitle menu according
+	 * to whether the media file playing has subtitle tracks or not 
+	 * 
+	 * @param enable - menu for subtitle items to go into
+	 * @param disable - menu item for disabling subtitles
+	 * @param selectsub - menu item for saving subtitles
+	 * 
+	 * @author blee660
+	 * 
+	 * */
 	public void setMenuBar(boolean video){
 		
 		_menuBar.add(open);
