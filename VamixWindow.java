@@ -34,7 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class VamixWindow extends JFrame {
 	
-	ImageIcon download = new ImageIcon("./src/download.png");
+	ImageIcon download = new ImageIcon(this.getClass().getResource("resources/download.png"));
 	ImageIcon play = new ImageIcon("./src/play.png");
 	ImageIcon extract = new ImageIcon("./src/cut.png");
 	ImageIcon quit = new ImageIcon("./src/quit.png");

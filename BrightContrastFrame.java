@@ -106,7 +106,7 @@ public class BrightContrastFrame extends JFrame implements ChangeListener, Actio
 		_contrast.setPreferredSize(prefSizeC);
 
 		//Add in image icons for users to know which slider controls brightness/contrast
-		ImageIcon b = new ImageIcon("./src/brightness.png");
+		ImageIcon b = new ImageIcon(this.getClass().getResource("resources/brightness.png"));
 		Image img = b.getImage();
 		Image newimg = img.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon newIcon = new ImageIcon(newimg);
@@ -114,7 +114,7 @@ public class BrightContrastFrame extends JFrame implements ChangeListener, Actio
 		//Set size of brightness image icon to fit into frame
 		br.setSize(20, 20);
 
-		ImageIcon c = new ImageIcon("./src/contrast.png");
+		ImageIcon c = new ImageIcon(this.getClass().getResource("resources/contrast.png"));
 		Image imgC = c.getImage();
 		Image newimgC = imgC.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon newIconC = new ImageIcon(newimgC);
@@ -210,23 +210,29 @@ public class BrightContrastFrame extends JFrame implements ChangeListener, Actio
 	}
 
 
+	// method to set brightness or contrast as the set value
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == _brightness){
+			//if brightness slider has been clicked
 			_brightness.setUI(new MetalSliderUI() {
 				protected void scrollDueToClickInTrack(int direction) {
 
+					// get value of slider
 					int _value = _brightness.getValue(); 
 
 					if (_brightness.getOrientation() == JSlider.HORIZONTAL) {
 						_value = this.valueForXPosition(_brightness.getMousePosition().x);
 
 					}
+					// set value of slider and brightness
 					_brightness.setValue(_value);
 					_pf.setBrightness((float)_value/100.0f);
 				}
 			});
+			
 		}else if(e.getSource() == _contrast){
+			//if contrast slider has been clicked
 			JSlider source = (JSlider)e.getSource();
 			float con = (float)(source.getValue()/100.0);
 			_pf.setContrast(con);
