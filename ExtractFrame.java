@@ -19,6 +19,7 @@ import worker.ExtractWorker;
  * The ExtractFrame class is a frame class where user is asked to enter
  * all the required information for extraction.
  * 
+ * 
  * @author Jenny Lee
  *
  */

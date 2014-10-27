@@ -16,8 +16,21 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.MetalSliderUI;
 
+/**
+ * 
+ * This HueSaturationFrame sets the level of hue and saturation for the mediaplayer
+ * 
+ * @param pf - playFrame instance
+ * @param currentH - current hue level
+ * @param currentS - current saturation level 
+ * 
+ * @author blee660
+ * 
+ * 
+ * */
 public class HueSaturationFrame extends JFrame implements ChangeListener, ActionListener, MouseListener{
 
+	// initialise GUI components
 	private float cS;
 	private int cH;
 	private JSlider _hue;
@@ -43,7 +56,10 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 	private JButton _cancel = new JButton("Cancel");
 	private JButton _default = new JButton("Restore Default");
 
+	//Constructor for this class
 	public HueSaturationFrame(PlayFrame pf, int currentH, float currentS){
+		
+		//set size and add all gui components into frame
 		setSize(370, 190);
 		_pf = pf;
 		cH = currentH;
@@ -54,8 +70,8 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 	    prefSS = sat.getPreferredSize();  
 	    sat.setPreferredSize(new Dimension(prefSS.width,prefSS.height));
 	    
-		
-		_hue = new JSlider(0, 300, (int)(cH/1.2));
+		//hue and saturation sliders
+	    _hue = new JSlider(0, 300, (int)(cH/1.2));
 		_sat = new JSlider(0, 300, (int)(cS*100));
 
 		_hue.setMajorTickSpacing(75);  
@@ -89,6 +105,7 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 		prefSizeS.width = 270;
 		_sat.setPreferredSize(prefSizeS);
 		
+		//set layout of panels
 		_panelH.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		_panelS.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		_panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -107,14 +124,17 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 		_panel.add(_panelS);
 		_panel.add(_panelButtons);
 
+		//add components and set the title of the frame
 		add(_panel);
 		setTitle("Set Hue/Saturation");
 
+		//add change listeners and mouse listeners to the sliders
 		_hue.addChangeListener(this);
 		_sat.addChangeListener(this);
 		_hue.addMouseListener(this);
 		_sat.addMouseListener(this);
 
+		// add action listeners to the buttons
 		_default.addActionListener(this);
 		_ok.addActionListener(this);
 		_cancel.addActionListener(this);
@@ -122,23 +142,28 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 
 	}
 
+	
+	//if the state of the slider has changed
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		if(e.getSource() == _hue){
+			//if the slider clicked is hue, set hue of media player by calling setHue(int h) method
 			JSlider source = (JSlider)e.getSource();
 			int h = (int) (source.getValue()*1.2);
 			_pf.setHue(h);
 		}else if(e.getSource() == _sat){
+			//if the slider clicked is saturation, set hue of media player by calling setSar(float s) method
 			JSlider source = (JSlider)e.getSource();
 			float s = (float)(source.getValue()/100.0);
 			_pf.setSat(s);
 		}
 	}
 	
-	
+	// if the slider is clicked
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == _hue){
+			//if hue is clicked
 			_hue.setUI(new MetalSliderUI() {
 				protected void scrollDueToClickInTrack(int direction) {
 
@@ -148,11 +173,13 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 						value = this.valueForXPosition(_hue.getMousePosition().x);
 
 					}
+					//set hue of media player by calling setHue(int h) method
 					_hue.setValue(value);
 					_pf.setHue((int)(value*1.2));
 				}
 			});
 		}else if(e.getSource() == _sat){
+			//if the slider clicked is saturation,
 			_sat.setUI(new MetalSliderUI() {
 				protected void scrollDueToClickInTrack(int direction) {
 
@@ -162,6 +189,7 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 						value = this.valueForXPosition(_sat.getMousePosition().x);
 
 					}
+					//set hue of media player by calling setSar(float s) method
 					_sat.setValue(value);
 					_pf.setSat((float)value/100.0f);
 				}
@@ -191,6 +219,7 @@ public class HueSaturationFrame extends JFrame implements ChangeListener, Action
 		
 	}
 
+	// if the buttons are clicked carry out corresponding actions
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == _ok){
